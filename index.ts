@@ -16,6 +16,15 @@ app.get('/price', async (req: Request, res: Response) => {
   }
 });
 
+app.get('/daily', async (req: Request, res: Response) => {
+  try {
+    const filteredDaily = await filter.getProductByDaily(req);
+    res.json(filteredDaily)
+  } catch (error) {
+    res.status(500).send('Erro ao buscar os variações diárias');
+  }
+})
+
 app.listen(3000, () => {
   console.log('executando na porta 3000');
 });

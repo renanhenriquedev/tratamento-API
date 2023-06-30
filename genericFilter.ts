@@ -43,13 +43,15 @@ export class GenericFilter<T> implements IGenericFilter<void> {
         
     }
 
-    async getProductByDaily(req: Request): Promise<void> {
+    async getProductByDaily(req: Request): Promise<string[]> {
 
         const product = req.body.product as string
 
 
         const response = await axios.get(`https://data.nasdaq.com/api/v3/datasets/CEPEA/${product}.json/?&api_key=AJqswHQAeMfyPJn7N2Dq`)
         const objeto = response.data.dataset.data
+
+        const arrayNovo: string[] = []; 
 
         for (let i = 0; i < objeto.length; i += 1) {
             const data = objeto[i];
@@ -58,11 +60,14 @@ export class GenericFilter<T> implements IGenericFilter<void> {
                 const tratamento = data[o];
 
                 if (tratamento > req.body.variationDay) {
-                    console.log(data[0], tratamento);
+                    arrayNovo.push(data[0], tratamento);
                 }
 
             }
         }
+
+        return arrayNovo
+
     }
 
     async getProductByMonthy(req: Request): Promise<void> {
