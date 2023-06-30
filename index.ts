@@ -1,37 +1,26 @@
 const axios = require('axios');
+const express = require('express');
+import { Request, Response } from 'express';
+import { GenericFilter } from './genericFilter';
 
-const url = 'https://data.nasdaq.com/api/v3/datasets/CEPEA/PORK/?limit=100&api_key=AJqswHQAeMfyPJn7N2Dq'
+const app = express();
+const filter = new GenericFilter();
+app.use(express.json());
 
-// async function getInfo() {
+app.get('/price', async (req: Request, res: Response) => {
+  try {
+    const filteredPrice = await filter.getProductByPrice(req);
+    res.json(filteredPrice);
+  } catch (error) {
+    res.status(500).send('Erro ao buscar os preços diários');
+  }
+});
 
-//     const response = await axios.get(url)
-//     // console.log(response.data);
+app.listen(3000, () => {
+  console.log('executando na porta 3000');
+});
 
-//     const objeto = response.data.dataset.data
-//     // console.log(objeto);
-
-//     for (let i = 0; i < objeto.length; i += 1) {
-//         const data = objeto[i];
-
-//         for (let o = 1; o < 2; o += 1) {
-//             const tratamento = data[o];
-
-//             if (tratamento > 0.50) {
-//                 console.log(data[0], tratamento);
-//             }
-
-//         }
-//     }
-// }
-
-// getInfo()
-
-
-import { GenericFilter } from "./genericFilter";
-
-const filter = new GenericFilter()
-
-filter.getProductByPrice('https://data.nasdaq.com/api/v3/datasets/CEPEA/CALF_C.json/?limit=20&api_key=AJqswHQAeMfyPJn7N2Dq', 0)
+// filter.getProductByPrice('https://data.nasdaq.com/api/v3/datasets/CEPEA/CALF_C.json/?limit=20&api_key=AJqswHQAeMfyPJn7N2Dq', 0)
 
 // filter.getProductByDaily('https://data.nasdaq.com/api/v3/datasets/CEPEA/SUGAR_c.json/?&api_key=AJqswHQAeMfyPJn7N2Dq', 0)
 

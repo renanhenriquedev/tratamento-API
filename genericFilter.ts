@@ -1,41 +1,54 @@
 import { IGenericFilter } from "./IGenericFilter";
 import axios from 'axios';
+import { Request } from 'express';
+
 
 export class GenericFilter<T> implements IGenericFilter<void> {
 
-    async getProductByPrice(url: string, price: number): Promise<void> {
+    async getProductByPrice(req: Request): Promise<string[]>  {
 
-        const response = await axios.get(url)
-        // console.log(response.data);
+        console.log(req.body);
+        
+
+        const product = req.body.product as string
+
+        const response = await axios.get(`https://data.nasdaq.com/api/v3/datasets/CEPEA/${product}.json/?&api_key=AJqswHQAeMfyPJn7N2Dq`)
 
         const objeto = response.data.dataset.data
-        // console.log(objeto);
+
+        // console.log('objeto', objeto);
+        
+
         const arrayNovo: string[] = []; // Declare o array fora do loop
         
         
         for (let i = 0; i < objeto.length; i += 1) {
             const data = objeto[i];
             // console.log(data);
+            // console.log('data', data);
             
             
             for (let o = 1; o < 2; o += 1) {
-                const tratamento = data[0];
-                arrayNovo.push(tratamento)
+                const tratamento = data[1];
+                // arrayNovo.push(tratamento)
                 
 
-                if (tratamento > price) {
-                    // console.log(data[0], tratamento);
+                if (tratamento > req.body.price) {                    
+                    arrayNovo.push(data[0], tratamento);
                 }
 
             }
-        }
-        console.log(arrayNovo);
+        }        
+        return arrayNovo;
         
     }
 
-    async getProductByDaily(url: string, variation: number): Promise<void> {
+    async getProductByDaily(req: Request): Promise<void> {
 
-        const response = await axios.get(url)
+        const product = req.body.product as string
+
+
+        const response = await axios.get(`https://data.nasdaq.com/api/v3/datasets/CEPEA/${product}.json/?&api_key=AJqswHQAeMfyPJn7N2Dq`)
         const objeto = response.data.dataset.data
 
         for (let i = 0; i < objeto.length; i += 1) {
@@ -44,7 +57,7 @@ export class GenericFilter<T> implements IGenericFilter<void> {
             for (let o = 2; o < 3; o += 1) {
                 const tratamento = data[o];
 
-                if (tratamento > variation) {
+                if (tratamento > req.body.variationDay) {
                     console.log(data[0], tratamento);
                 }
 
@@ -52,9 +65,12 @@ export class GenericFilter<T> implements IGenericFilter<void> {
         }
     }
 
-    async getProductByMonthy(url: string, variation: number): Promise<void> {
+    async getProductByMonthy(req: Request): Promise<void> {
 
-        const response = await axios.get(url)
+        const product = req.body.product as string
+
+
+        const response = await axios.get(`https://data.nasdaq.com/api/v3/datasets/CEPEA/${product}.json/?&api_key=AJqswHQAeMfyPJn7N2Dq`)
         const objeto = response.data.dataset.data
 
         for (let i = 0; i < objeto.length; i += 1) {
@@ -63,7 +79,7 @@ export class GenericFilter<T> implements IGenericFilter<void> {
             for (let o = 3; o < 4; o += 1) {
                 const tratamento = data[o];
 
-                if (tratamento > variation) {
+                if (tratamento > req.body.variationMonthy) {
                     console.log(data[0], tratamento);
                 }
 
